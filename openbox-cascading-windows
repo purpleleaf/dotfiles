@@ -1,0 +1,87 @@
+<!--  Cascading Openbox Client Windows  -->
+<!--  Cascade Openbox Linux  -->
+<!--  Courtesy of asharrem @ gmail.com  -->
+<!-- Cascade Monitor 1-->
+<keybind key="W-C-KP_1"><!-- Un-Iconify all Windows first-->
+<action name="ForEach">
+  <query>
+    <iconified>yes</iconified>
+    <monitor>1</monitor>
+    <desktop>current</desktop>
+    <type>normal</type>
+  </query>
+<then>
+  <action name="Focus"/>
+  <action name="FocusToBottom"/>
+  <action name="Unfocus"/>
+</then>
+</action>
+<!-- Place Focused Window to TopLeft to start the cascade & stay at Top Layer -->
+<action name="If">
+  <query>
+    <monitor>1</monitor>
+    <desktop>current</desktop>
+    <focused>yes</focused>
+    <type>normal</type>
+    <iconified>no</iconified>
+  </query>
+<then>
+  <action name="Lower"/>
+  <action name="Unmaximize"/>
+  <action name="MoveResizeTo">
+    <x>0</x>
+    <y>0</y>
+    <height>1/2</height>
+    <width>1/2</width>
+  </action>
+</then>
+</action>
+  <!-- Sequentially move each window (except focused one) to top TopLeft & Nudge -->
+<action name="ForEach">
+  <query>
+    <monitor>1</monitor>
+    <desktop>current</desktop>
+    <type>normal</type>
+    <iconified>no</iconified>
+  </query>
+<then>
+  <!-- Do not action the Focused Window as we did it first-->
+  <action name="If">
+    <query>
+      <monitor>1</monitor>
+      <desktop>current</desktop>
+      <focused>no</focused>
+      <type>normal</type>
+      <iconified>no</iconified>
+    </query>
+  <then>
+    <!-- Begin Nested ForEach Nudging Iteration -->
+    <action name="ForEach">
+      <query><monitor>1</monitor>
+        <desktop>current</desktop>
+        <type>normal</type>
+        <iconified>no</iconified>
+      </query>
+    <then>
+      <!-- Nudge -->
+      <action name="MoveRelative">
+        <x>5%</x>
+        <y>5%</y>
+        </action>
+    </then>
+    </action>
+    <!-- End Nested ForEach Nudging Iteration -->
+    <!-- Move Window to Top Left -->
+    <action name="Lower"/>
+    <action name="Unmaximize"/>
+    <action name="MoveResizeTo">
+      <x>0</x>
+      <y>0</y>
+      <height>1/2</height>
+      <width>1/2</width>
+    </action>
+  </then>
+  </action>
+</then>
+</action>
+</keybind>
