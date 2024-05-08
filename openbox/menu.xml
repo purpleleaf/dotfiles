@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<openbox_menu>
+
+<menu id="SystemArch" label="Systema Arch">
+	<item label="Themes" icon="/usr/share/icons/Papirus/32x32/apps/preferences-desktop-theme-global.svg">
+		<action name="Execute">
+			<command>lxappearance</command>
+		</action>
+	</item>
+	<item label="Configurazione Tint2" icon="/usr/share/icons/Papirus/24x24/apps/tint2conf.svg">
+		<action name="Execute">
+			<command>tint2conf</command>
+		</action>
+	</item>
+	<item label="Configurazione Audio" icon="/usr/share/icons/Papirus-Dark/symbolic/categories/applications-multimedia-symbolic.svg">
+		<action name="Execute">
+			<command>asoundconf-gtk</command>
+		</action>
+	</item>
+	<item label="Configurazione schermo" icon="/usr/share/icons/Papirus/32x32/apps/system-config-display.svg">
+		<action name="Execute">
+			<command>lxrandr</command>
+		</action>
+	</item>
+</menu>
+<menu id="system" label="Openbox">
+	<item label="Kickshaw" icon="/usr/share/icons/Papirus/24x24/apps/applications-interfacedesign.svg">
+		<action name="Execute">
+			<command>kickshaw</command>
+		</action>
+	</item>
+	<item label="Obconf" icon="/usr/share/icons/Papirus/24x24/apps/applications-interfacedesign.svg">
+		<action name="Execute">
+			<command>obconf</command>
+		</action>
+	</item>
+	<item label="Autostart" icon="/usr/share/icons/Papirus/32x32/mimetypes/text-plain.svg">
+		<action name="Execute">
+			<command>xdg-open ~/.config/openbox/autostart</command>
+		</action>
+	</item>
+	<item label="Menu.xml" icon="/usr/share/icons/Papirus/32x32/mimetypes/text-plain.svg">
+		<action name="Execute">
+			<command>xdg-open ~/.config/openbox/menu.xml</command>
+		</action>
+	</item>
+	<item label="Rc.xml" icon="/usr/share/icons/Papirus/32x32/mimetypes/text-plain.svg">
+		<action name="Execute">
+			<command>xdg-open ~/.config/openbox/rc.xml</command>
+		</action>
+	</item>
+</menu>
+
+<menu id="root-menu" label="Openbox 3">
+	<item label="zzzfm" icon="/usr/share/pixmaps/zzzfm24.png">
+		<action name="Execute">
+			<command>zzzfm</command>
+		</action>
+	</item>
+	<item label="zzzfm root" icon="/usr/share/pixmaps/zzzfm-root.png">
+		<action name="Execute">
+			<command>gksudo zzzfm</command>
+		</action>
+	</item>
+	<item label="Terminale" icon="/usr/share/icons/Papirus/32x32/apps/terminal.svg">
+		<action name="Execute">
+			<command>xterm</command>
+		</action>
+	</item>
+	<item label="Palemoon Browser" icon="/usr/share/icons/hicolor/48x48/apps/palemoon.png">
+		<action name="Execute">
+			<command>palemoon</command>
+		</action>
+	</item>
+	<item label="Editor Testuale" icon="/usr/share/icons/Papirus/24x24/apps/xed.svg">
+		<action name="Execute">
+			<command>pluma</command>
+		</action>
+	</item>
+	<item label="Esegui.." icon="/usr/share/icons/ePapirus/24x24/actions/system-run.svg">
+		<action name="Execute">
+			<command>gmrun</command>
+		</action>
+	</item>
+	<item label="Trova Applicazione   " icon="/usr/share/icons/Papirus/24x24/apps/xfce4-appfinder.svg">
+		<action name="Execute">
+			<command>/home/max/.config/rofi/launchers/misc/launcher.sh</command>
+		</action>
+	</item>
+	<separator/>
+	<menu id="applications" label="Applicazioni" execute="obmenu-generator -i -m applications" icon="/usr/share/icons/Papirus/24x24/categories/applications-other.svg"/>
+	<separator/>
+	<menu id="SystemArch" icon="/usr/share/icons/ePapirus/24x24/actions/application-menu.svg"/>
+	<menu id="system" icon="/usr/share/icons/Papirus-Dark/24x24/actions/configuration.svg"/>
+	<separator/>
+	<menu id="sysinfo" label="Sysinfo" execute="ob-sysinfo.pl" icon="/usr/share/icons/ePapirus/22x22/actions/appointment-soon.svg"/>
+	<menu id="OBFileBrowser" label="Places" execute="places"/>
+	<menu id="wheather" label="Weather" execute="weather.sh"/>
+	<separator/>
+	<item label="Reconfigure" icon="/usr/share/icons/Papirus/22x22/panel/system-restart-panel.svg">
+		<action name="reconfigure"/>
+	</item>
+	<item label="Lockscreen" icon="/usr/share/icons/Papirus-Dark/22x22/actions/exit.svg">
+		<action name="Execute">
+			<command>betterlockscreen --show-layout 3  --lock blur /usr/share/obarun/ob-lockscreen/oblock.png</command>
+		</action>
+	</item>
+	<item label="Exit" icon="/usr/share/icons/Papirus-Dark/24x24/actions/lock.svg">
+		<action name="Execute">
+			<command>obshutdown</command>
+		</action>
+	</item>
+</menu>
+
+</openbox_menu>

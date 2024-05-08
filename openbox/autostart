@@ -1,0 +1,14 @@
+picom --config ~/.config/picom.conf &
+#/usr/lib/xfce-polkit/xfce-polkit &
+#sudo dhclient eth0 &
+numlockx &
+tint2 -c ~/.config/tint2/tint2rc &
+#xfce4-panel &
+greenclip daemon &
+#connman-gtk &
+#rieman &
+#xfdashboard -d &
+#dhcpcd-gtk &
+xdotool behave_screen_edge --delay 300 top-left key Menu &
+xdotool behave_screen_edge --delay 300 top-right key alt+space &
+/usr/lib/pmwc/bing-wallpaper /home/max/Immagini/Wallpapers 1000 &

@@ -1,0 +1,5 @@
+Bing wallpaper of the day will be downloaded and setted.
+Wallpaper will be updated at every login.
+The wallpaper will be saved to the choosen directory.
+You can also preview the wallpapers on the directory by double cliccking on them.
+The directory size limit field allo you to set a maxim directory size in MegaBytes. Please enter only integer numbers and a value smaller then 1000 Mb. If you set non integer or a value bigger then 1000, the size limit will be disabled

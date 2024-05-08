@@ -1,0 +1,27 @@
+# Items: [s]hort description, [d]escription, [t]emperature, [p]ressure, [h]umidity, [w]ind, [c]ity name
+# API key: go to http://openweathermap.org and get one
+# city_id you will find at http://openweathermap.org/find
+# units may be metric or imperial
+# Uncomment lang to override system $LANG value
+# Uncomment img_path to override built-in icons
+# 
+# Delete this file if something goes wrong :)
+# ------------------------------------------------
+items = t
+api_key = 9ae66a2707371340ab379d7ad404bb15
+city_id = 3176959
+units = metric
+lang = it
+#img_path = /home/user/my_custom_icons/
+#glyphs = True
+
+# You may translate your output below:
+#
+_weather = Weather in
+_wind = Wind
+_cloudiness = Cloudiness
+_pressure = Pressure
+_humidity = Humidity
+_sunrise = Sunrise
+_sunset = Sunset
+
