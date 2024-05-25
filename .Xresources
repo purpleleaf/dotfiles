@@ -38,10 +38,6 @@ URxvt.iconFile: /usr/share/icons/Dracula/scalable/apps/xterm.svg
 
 xterm*iconHint: /home/max/.icons/xterm-color_48x48.xpm
 
-XTerm*faceName: xft:DejaVuSansM Nerd Font Mono:style=Regular:antialias=true:hinting=true:size=11:minspace=False, 
-	xft:Noto Color Emoji:style=Regular:antialias=true:size=11:minspace=False, \
-	xft:Monospace:size=11
-
 ! font
 *.font: xft:DejaVuSansM Nerd Font Mono:style=Regular:antialias=true:hinting=true:size=11:minspace=False, 
 	xft:Noto Color Emoji:style=Regular:antialias=true:size=11:minspace=False, \
