@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+# Daniel Napora 2020 - 2021 <napcok@gmail.com>
+#. "$HOME"/.config/mabox/mabox.conf
+
+case $LANG in
+    pl*)
+        DIRECTORIES="Katalogi"
+        FILES="Pliki"
+        OPENDIR="Otwórz w menadżerze plików"
+        OPENTERM="Otwórz w terminalu"
+        ;;
+    es*)
+        DIRECTORIES="Directorios"
+        FILES="Archivos"
+        OPENDIR="Abrir Gestor de archivos aquí"
+        OPENTERM="Abrir terminal aquí"
+        ;;
+    *)
+        DIRECTORIES="Directories"
+        FILES="Files"
+        OPENDIR="Open filemanager here"
+        OPENTERM="Open terminal here"
+     ;;
+esac
+    
+: "${JGMENU_RESOURCE_OPENER="xdg-open"}"
+
+    
+    DIRECTORY=${1:-$HOME}
+
+    # If '$DIRECTORY' is '/', unset it to avoid '//'.
+    [[ $DIRECTORY == / ]] && DIRECTORY=
+
+if [ "$jgbrowser_show_hidden" == false ];then
+    for item in "$DIRECTORY"/*; do
+        if [[ -d $item ]]; then
+            dirs+=("${item##*/},^pipe(jgbrowser \"$DIRECTORY/${item##*/}\")")
+        else
+        if [[ -f $item ]]; then
+            files+=("${item##*/},xdg-open \"$DIRECTORY/${item##*/}\"")
+        fi
+        fi
+    done
+
+else
+    for item in "$DIRECTORY"/* "$DIRECTORY"/.[^.]*; do
+        if [[ -d $item ]]; then
+            dirs+=("${item##*/},^pipe(jgbrowser \"$DIRECTORY/${item##*/}\")")
+        else
+        if [[ -f $item ]]; then
+            files+=("${item##*/},xdg-open \"$DIRECTORY/${item##*/}\"")
+        fi
+        fi
+    done
+fi
+
+printf "%b\n" "^sep(<small><i>${DIRECTORY:-/}</i></small>)"
+printf "%b\n" "   $OPENDIR,${JGMENU_RESOURCE_OPENER} \"${DIRECTORY:-/}\""
+printf "%b\n" "<big> </big> $OPENTERM, xterm -e 'cd \"${DIRECTORY:-/}\" && /bin/bash'"
+#printf "%b\n" "    $OPENTERM,terminator --working-directory=\"${DIRECTORY:-/}\""
+if [ ${#dirs[@]} -ne 0 ]; then
+    printf "%b\n" "^sep($DIRECTORIES <small>(${#dirs[@]})</small>)"
+    printf "%s\n" "${dirs[@]/&/&amp;}"
+fi
+if [ ${#files[@]} -ne 0 ]; then
+    printf "%b\n" "^sep($FILES <small>(${#files[@]})</small>)"
+    #printf "%s\n" "${files[@]}"
+    #okfiles=("${files[@]/</ &lt;}")
+    printf "%s\n" "${files[@]/&/&amp;}"
+fi
+
