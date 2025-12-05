@@ -1,0 +1,18 @@
+#!/bin/bash
+ dunstify  -i wifi-radar Wlan0 "$(iwctl station wlan0 show \
+ | tail -n +5 \
+ | head -n -1 \
+ | sed -e "s:\[1;30m::g" \
+ | sed -e "s:\[0m::g" \
+ | sed -e "s:\*\x1b.*:\*:g" \
+ | sed -e "s:\x1b::g" \
+ | tr -s ' ' )"
+ 
+ dunstify -i network-modem Wlan0 "$(iwctl station wlan0 get-networks \
+  | tail -n +5 \
+ | head -n -1 \
+ | sed -e "s:\[1;90m::g" \
+ | sed -e "s:\[0m::g" \
+ | sed -e "s:\*\x1b.*:\*:g" \
+ | sed -e "s:\x1b::g" \
+ | tr -s ' ' )"
