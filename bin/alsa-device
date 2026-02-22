@@ -1,0 +1,140 @@
+#!/bin/bash
+
+#### GUI to control alsa and change audio device ####
+#### Credit to Xecure - refer to https://www.antixforum.com/forums/topic/sound-issues/
+source gettext.sh
+
+ASOUND_FILE=$HOME/.asoundrc
+if [ -d "/dev/shm/" ]; then
+	SOUND_DEVICE_LIST=$(mktemp -p /dev/shm)
+else
+	SOUND_DEVICE_LIST=$(mktemp)
+fi
+export SOUND_DEVICE_LIST
+
+#### Get current default sound device ####
+get_current_default(){
+	local DEFAULT_CARD="0,X"
+	local CURRENT_DEFAULT
+	local CURRENT_DEFAULT_POS
+	local CURRENT_DEFAULT_NAME
+	local CURRENT_CARD
+	local CURRENT_DEVICE
+	local ASOUND_FILE_CONTENTS
+	
+	# Load current default card value
+	if [ -f "$ASOUND_FILE" ] && [ -s "$ASOUND_FILE" ]; then
+		ASOUND_FILE_CONTENTS="$(cat "$ASOUND_FILE")"
+		CURRENT_CARD="$(echo "$ASOUND_FILE_CONTENTS" | grep -m1 "^defaults.pcm.!card" | cut -d " " -f2)"
+		CURRENT_DEVICE="$(echo "$ASOUND_FILE_CONTENTS" | grep -m1 "^defaults.pcm.!device" | cut -d " " -f2)"
+		CURRENT_DEVICE="${CURRENT_DEVICE:-X}"
+		CURRENT_DEFAULT="${CURRENT_CARD},${CURRENT_DEVICE}"
+	fi
+	# If no card was selected, the default is card 0
+	CURRENT_DEFAULT="${CURRENT_DEFAULT:-$DEFAULT_CARD}"
+	
+	# Get Device name from
+	CURRENT_DEFAULT_POS="$(cat "$SOUND_DEVICE_LIST" | grep -m1 -nx $CURRENT_DEFAULT | cut -d":" -f1)"
+	CURRENT_DEFAULT_POS="$((++CURRENT_DEFAULT_POS))"
+	CURRENT_DEFAULT_NAME="$(sed -n ${CURRENT_DEFAULT_POS}p "$SOUND_DEVICE_LIST")"
+	echo "$CURRENT_DEFAULT_NAME"
+}
+
+#### Test if the device selected plays sound ####
+test_device(){
+	local SELECTED_DEVICE="${1}"
+	local TEST_CARD="${SELECTED_DEVICE%%,*}"
+	local TEST_DEVICE="${SELECTED_DEVICE##*,}"
+	local SPEAKER_TEST_OPTS="-c 2 -t wav -l 1"
+	
+	echo "Test card:${TEST_CARD} Test device:${TEST_DEVICE}"
+	
+	# If a card was selected
+	if [[ "$TEST_DEVICE" == "X" ]]; then
+		speaker-test -Dhw:${TEST_CARD} $SPEAKER_TEST_OPTS
+	# If a DEVICE was selected
+	else
+		speaker-test -Dplughw:${TEST_CARD},${TEST_DEVICE} $SPEAKER_TEST_OPTS
+	fi
+}
+export -f test_device
+
+#### Save asoundrc sound configuration
+save_soundconfig(){
+	local SOUND_HW_OPTION="${1}"
+	local SOUND_CARD="${SOUND_HW_OPTION%%,*}"
+	local SOUND_DEVICE="${SOUND_HW_OPTION##*,}"
+	# Save ound card
+	echo "defaults.pcm.!card $SOUND_CARD" > $ASOUND_FILE
+	# Save Device option
+	if [[ "$SOUND_DEVICE" != "X" ]]; then
+		echo "defaults.pcm.!device $SOUND_DEVICE" >> $ASOUND_FILE
+	else
+		echo "saved default soundcard: $SOUND_CARD"
+	fi
+	# Save control card
+	echo "defaults.ctl.!card $SOUND_CARD" >> $ASOUND_FILE
+}
+
+#### Get all audio devices with aplay -l ###
+create_devices_list(){
+	local AUDIO_DEVICES="$(aplay -l | grep -v "^ " | grep -v "^*")"
+	local CURRENT_CARD NEW_CARD DEVICE_NAME CARD_NUMBER DEVICE_NUMBER DEVICE_ID
+	rm -f "$SOUND_DEVICE_LIST" # Clean file in case it was already created
+	while read -r line; do
+		NEW_CARD="$(echo "$line" | cut -d"," -f1)"
+		CARD_NUMBER="$(echo "$NEW_CARD" | cut -d":" -f1 | rev | cut -d" " -f1 | rev)"
+		## First time detecting a sound card
+		if [[ "$CURRENT_CARD" != "$NEW_CARD" ]]; then
+			CURRENT_CARD="$NEW_CARD"
+			DEVICE_NAME="$CURRENT_CARD"
+			DEVICE_ID="${CARD_NUMBER},X"
+			# Export Device information
+			echo "$DEVICE_ID" >> "$SOUND_DEVICE_LIST"
+			echo "$DEVICE_NAME" >> "$SOUND_DEVICE_LIST"
+		fi
+		DEVICE_NAME="	$(echo "$line" | cut -d"," -f2-)"
+		DEVICE_NUMBER="$(echo "$DEVICE_NAME" | cut -d":" -f1 | rev | cut -d" " -f1 | rev)"
+		DEVICE_ID="${CARD_NUMBER},${DEVICE_NUMBER}"
+		
+		# Export Device information
+		echo "$DEVICE_ID" >> "$SOUND_DEVICE_LIST"
+		echo "$DEVICE_NAME" >> "$SOUND_DEVICE_LIST"
+		 
+	done < <(echo "$AUDIO_DEVICES")
+}
+
+main(){
+	local SELECTED_DEVICE
+	local CURRENT_DEFAULT_CARD
+	#~ get_current_default
+	while true; do
+		create_devices_list
+		CURRENT_DEFAULT_CARD="$(get_current_default)"
+		
+		SELECTED_DEVICE=$(yad --class="alsa-devices" --name="alsa-devices" \
+		--window-icon=soundcard --title="$(eval_gettext "Select Sound Device")" --borders=20 \
+		--text="$(eval_gettext "Current sound device:\n<b>$CURRENT_DEFAULT_CARD</b>\n\
+Select your default sound device (double-click to test first)")" \
+		--text-align=center --center --separator=" " --list \
+		--column="#" --column="$(eval_gettext "Sound Device")" --hide-column=1 --print-column=1 \
+		--width=700 --height=400  --dclick-action='bash -c "test_device %s > /dev/null"'\
+		--button="$(eval_gettext "Restore defaults!gtk-goto-top!Restore to the default soundcard")":2 \
+		--button="$(eval_gettext "Save!gtk-save!Save as default sound device")":0 < $SOUND_DEVICE_LIST)
+		local exitcode=$?
+		if [ $exitcode -eq 2 ]; then
+			rm -f "$ASOUND_FILE"
+			echo "restoring default sound configuration"
+		elif [ ! -z "$SELECTED_DEVICE" ] && [ $exitcode -eq 0 ]; then
+			#test_device $SELECTED_DEVICE &
+			save_soundconfig $SELECTED_DEVICE
+			break
+		else
+			break
+		fi
+	done
+}
+
+#### Start program ###
+main
+
